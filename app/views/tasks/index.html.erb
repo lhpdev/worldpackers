@@ -1,6 +1,6 @@
-<p id="notice" class="color-<%= (1..4).to_a.sample%>"><%= notice %></p>
+<p id="notice"><%= notice %></p>
 
-<h1>Worldpackers Awesome To Do List</h1>
+<h1>To Do List</h1>
 
 <% if @tasks.any? %>
   <table>
@@ -15,9 +15,8 @@
     <tbody>
       <% @tasks.each do |task| %>
         <tr>
-          <td><%= truncate(task.description, length: 80) %></td>
+          <td><%= link_to "#{truncate(task.description, length: 80)}", task %></td>
           <td><%= link_to task.status, toggle_status_task_path(task) %></td>
-          <td><%= link_to 'Show', task %></td>
           <td><%= link_to 'Edit', edit_task_path(task) %></td>
           <td><%= link_to 'Delete', task, method: :delete, data: { confirm: 'Are you sure?' } %></td>
         </tr>

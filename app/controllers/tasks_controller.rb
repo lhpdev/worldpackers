@@ -1,9 +1,12 @@
 class TasksController < ApplicationController
   before_action :set_task, only: [:show, :edit, :update, :destroy, :toggle_status]
+  include SetNotice
 
   # GET /tasks
   # GET /tasks.json
   def index
+    puts self.params
+    @color = params[:color]
     @tasks = Task.all
   end
 
@@ -42,7 +45,7 @@ class TasksController < ApplicationController
   def update
     respond_to do |format|
       if @task.update(task_params)
-        format.html { redirect_to @task }
+        format.html { redirect_to tasks_url }
         format.json { render :show, status: :ok, location: @task }
       else
         format.html { render :edit }
@@ -63,14 +66,24 @@ class TasksController < ApplicationController
 
   def toggle_status
     if @task.ongoing?
-      @task.completed!
+      @task.completed! && set_notice
+      @event = Event.create!(event_type: 'Congratulations', 
+                             content: {
+                              color: @color,
+                              message: @message
+                            })
       respond_to do |format|
-        format.html { redirect_to tasks_url }
+        format.html { redirect_to tasks_url, notice: @message }
       end 
     elsif @task.completed?
-      @task.ongoing!
+      @task.ongoing! && set_notice
+      @event = Event.create!(event_type: 'Shame!!!', 
+                              content: {
+                                color: @color,
+                                message: @message
+                            })
       respond_to do |format|
-        format.html { redirect_to tasks_url }
+        format.html { redirect_to tasks_url, notice: @message }
       end
     end
   end 
