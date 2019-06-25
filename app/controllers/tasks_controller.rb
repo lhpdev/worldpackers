@@ -1,12 +1,12 @@
 class TasksController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_task, only: [:show, :edit, :update, :destroy, :toggle_status]
+  before_action :set_task, only: [:show, :edit, :update, :destroy, :toggle_status, :remove]
+  before_action :set_current_tasks, only: [:index]
   include SetNotice
 
   # GET /tasks
   # GET /tasks.json
   def index
-    @tasks = current_user.tasks
   end
 
   # GET /tasks/1
@@ -65,8 +65,8 @@ class TasksController < ApplicationController
 
   def toggle_status
     if @task.ongoing?
-      @task.completed! && set_notice
-      @event = Event.create!(event_type: 'Congratulations', 
+      @task.completed! && set_notice 
+      @event = @task.events.create!(event_type: 'Congratulations', 
                              content: {
                               color: @color,
                               message: @message
@@ -76,7 +76,7 @@ class TasksController < ApplicationController
       end 
     elsif @task.completed?
       @task.ongoing! && set_notice
-      @event = Event.create!(event_type: 'Shame!!!', 
+      @event = @task.events.create!(event_type: 'Shame!!!', 
                               content: {
                                 color: @color,
                                 message: @message
@@ -85,12 +85,23 @@ class TasksController < ApplicationController
         format.html { redirect_to tasks_url, notice: @message }
       end
     end
-  end 
+  end
+
+  def remove
+    @task.deleted!
+    respond_to do |format|
+      format.html { redirect_to tasks_url }
+    end 
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_task
       @task = Task.find(params[:id])
+    end
+
+    def set_current_tasks
+      @tasks = Task.where(user_id: current_user.id).where.not(status: 2)
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

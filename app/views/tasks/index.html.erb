@@ -19,7 +19,7 @@
             <td><%= link_to "#{truncate(task.description, length: 80)}", task %></td>
             <td><%= link_to task.status, toggle_status_task_path(task) %></td>
             <td><%= link_to 'Edit', edit_task_path(task) %></td>
-            <td><%= link_to 'Delete', task, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+            <td><%= link_to 'Delete', remove_task_path(task) , data: { confirm: 'Are you sure?' } %></td>
           </tr>
         <% end %>
       </tbody>
