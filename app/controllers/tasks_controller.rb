@@ -2,7 +2,6 @@ class TasksController < ApplicationController
   before_action :authenticate_user!
   before_action :set_task, only: [:show, :edit, :update, :destroy, :toggle_status, :remove]
   before_action :set_current_tasks, only: [:index]
-  include SetNotice
 
   # GET /tasks
   # GET /tasks.json
@@ -27,74 +26,65 @@ class TasksController < ApplicationController
   # POST /tasks
   # POST /tasks.json
   def create
-    @task = current_user.tasks.new(task_params)
-
-    respond_to do |format|
-      if @task.save
-        format.html { redirect_to tasks_url }
-        format.json { render :show, status: :created, location: @task }
-      else
-        format.html { render :new }
-        format.json { render json: @task.errors, status: :unprocessable_entity }
-      end
+    result = CreateTask.call(
+      params: task_params,
+      user: current_user
+    )
+    if result.success?
+      redirect_to tasks_url
+    else
+      redirect_to tasks_url, notice: "Can't create task with blank description"
     end
   end
 
   # PATCH/PUT /tasks/1
   # PATCH/PUT /tasks/1.json
   def update
-    respond_to do |format|
-      if @task.update(task_params)
-        format.html { redirect_to tasks_url }
-        format.json { render :show, status: :ok, location: @task }
-      else
-        format.html { render :edit }
-        format.json { render json: @task.errors, status: :unprocessable_entity }
-      end
+    result = UpdateTask.call(
+      params: task_params,
+      task: @task
+    )
+    if result.success?
+      redirect_to tasks_url
+    else
+      redirect_to tasks_url, notice: "Couldn't update the task"
     end
   end
 
   # DELETE /tasks/1
   # DELETE /tasks/1.json
   def destroy
-    @task.destroy
-    respond_to do |format|
-      format.html { redirect_to tasks_url }
-      format.json { head :no_content }
+    result = DeleteTask.call(
+      task: @task
+    )
+    if result.success?
+      redirect_to tasks_url
+    else
+      redirect_to tasks_url, notice: "Couldn't delete the task"
     end
   end
 
   def toggle_status
-    if @task.doing?
-      @task.completed! && set_notice 
-      @event = @task.events.create!(event_type: 'Congratulations', 
-                                    content: {
-                                      color: @color,
-                                      message: @message
-                                    })
-      respond_to do |format|
-        flash[:notice] = @message
-        format.html { redirect_to tasks_url(color: @color) }
-      end 
-    elsif @task.completed?
-      @task.doing! && set_notice
-      @event = @task.events.create!(event_type: 'Shame', 
-                                    content: {
-                                      color: @color,
-                                      message: @message
-                                    })
-      respond_to do |format|
-        flash[:notice] = @message
-        format.html { redirect_to tasks_url(color: @color) }
-      end
+    result = ToggleTask.call(
+      task: @task
+    )
+    if result.success?
+      flash[:notice] = result.message
+      redirect_to tasks_url(color: result.color)
+    else
+      redirect_to tasks_url, notice: "Couldn't toggle the task"
     end
   end
 
   def remove
-    @task.deleted!
-    respond_to do |format|
-      format.html { redirect_to tasks_url }
-    end 
+    result = RemoveTask.call(
+      params: @task
+    )
+    if result.success?
+      redirect_to tasks_url
+    else
+      redirect_to tasks_url, notice: "Task couldn't be deleted"
+    end
   end
 
   private
