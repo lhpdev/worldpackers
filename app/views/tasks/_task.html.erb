@@ -1,0 +1,6 @@
+<tr scope="row">
+  <td><%= link_to "#{truncate(task.description, length: 80)}", task %></td>
+  <td><button type="button" class="btn btn-link"><%= link_to task.status.capitalize, toggle_status_task_path(task) %></button></td>
+  <td><button type="button" class="btn btn-link"><%= link_to 'Edit', edit_task_path(task) %></button></td>
+  <td><button type="button" class="btn btn-link"><%= link_to 'Delete', remove_task_path(task) %></button></td>
+</tr>

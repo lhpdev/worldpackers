@@ -7,6 +7,7 @@ class TasksController < ApplicationController
   # GET /tasks
   # GET /tasks.json
   def index
+    @color = params[:color]
   end
 
   # GET /tasks/1
@@ -64,25 +65,27 @@ class TasksController < ApplicationController
   end
 
   def toggle_status
-    if @task.ongoing?
+    if @task.doing?
       @task.completed! && set_notice 
       @event = @task.events.create!(event_type: 'Congratulations', 
-                             content: {
-                              color: @color,
-                              message: @message
-                            })
+                                    content: {
+                                      color: @color,
+                                      message: @message
+                                    })
       respond_to do |format|
-        format.html { redirect_to tasks_url, notice: @message }
+        flash[:notice] = @message
+        format.html { redirect_to tasks_url(color: @color) }
       end 
     elsif @task.completed?
-      @task.ongoing! && set_notice
-      @event = @task.events.create!(event_type: 'Shame!!!', 
-                              content: {
-                                color: @color,
-                                message: @message
-                            })
+      @task.doing! && set_notice
+      @event = @task.events.create!(event_type: 'Shame', 
+                                    content: {
+                                      color: @color,
+                                      message: @message
+                                    })
       respond_to do |format|
-        format.html { redirect_to tasks_url, notice: @message }
+        flash[:notice] = @message
+        format.html { redirect_to tasks_url(color: @color) }
       end
     end
   end

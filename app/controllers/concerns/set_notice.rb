@@ -6,12 +6,12 @@ module SetNotice
   end
 
   def set_notice
-    if @task.ongoing?
+    if @task.doing?
       @color = @colors.sample
-      @message = ['Shame!!', 'No way!!', 'That is wrong!'].sample
+      @message = ['Poxa vida ...', 'Puts ...', 'Eita!', 'Tsc tsc ...', 'Nããão!'].sample
     else
       @color = @colors.sample
-      @message = ['Congratulations!!', 'Good on you', 'Amazing'].sample
+      @message = ['Parabéns!', 'Muito bom!', 'Boa!', 'Fantástico!', 'Mandou bem!'].sample
     end 
   end
 

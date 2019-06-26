@@ -6,18 +6,17 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'true' %>
   </head>
 
   <body>
-    <div  class="container">
-    
-      <%= greetings_helper %>
+      <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="#"><%= greetings_helper %></a>
+        <a class="navbar-brand"><%= login_helper %></a>
+      </nav>
 
-      <%= login_helper %>
-
-      <%= yield %>
-      
-    </div>
+      <div  class="container justify-content-center">
+        <%= yield %>
+      </div>
   </body>
 </html>

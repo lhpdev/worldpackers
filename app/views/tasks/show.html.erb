@@ -7,8 +7,9 @@
 
 <p>
   <strong>Status:</strong>
-  <%= @task.status %>
+  <%= @task.status.capitalize %>
 </p>
 
-<%= link_to 'Edit', edit_task_path(@task) %> |
-<%= link_to 'Back', tasks_path %>
+<button type="button" class="btn btn-link"><%= link_to 'Back', tasks_path %></button> |
+<button type="button" class="btn btn-link"><%= link_to 'Edit', edit_task_path(@task) %></button> 
+
