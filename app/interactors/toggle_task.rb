@@ -8,7 +8,7 @@ class ToggleTask
 
     if task.doing?
       task.completed!
-      event = Event.new(event_type: 'Congratulations', 
+      event = Event.new(event_type: 'congratulation', 
                                     content: {
                                       color: set_color,
                                       message: set_message(task)
@@ -16,7 +16,7 @@ class ToggleTask
       event.task = task
     elsif task.completed?
       task.doing!
-      event = Event.new(event_type: 'Congratulations', 
+      event = Event.new(event_type: 'shame', 
                                     content: {
                                       color: set_color,
                                       message: set_message(task)
