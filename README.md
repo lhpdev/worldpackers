@@ -9,16 +9,30 @@ Things you may want to cover:
 
 * System dependencies
 
+> You need to have docker installed
+ - more info: https://docs.docker.com/install/
+
 * Configuration
+  Once you have docker installed at the root folder build up the project's containers:
+  Run:
+  > docker-compose build
 
 * Database creation
 
-* Database initialization
+  run the command:
+
+  > docker-compose run web rails db:create
+
+  and then do not forget to run the migrations
+
+  > docker-compose run web rails db:migrate
+
+* Database and application initialization
+
+  run the command:
+
+  > docker-compose up
 
 * How to run the test suite
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+  > docker-compose run web rspec
